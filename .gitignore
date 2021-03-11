@@ -1,3 +1,6 @@
 api/venv
 api/src/.vscode
 api/src/.env
+__pycache__/
+data.db
+.idea/
