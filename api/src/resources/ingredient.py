@@ -1,27 +1,12 @@
-from flask_restful import Resource, reqparse
+from flask import request
+from flask_restful import Resource
 
 from models.ingredient import IngredientModel
+from schemas.ingredient import IngredientSchema
 
 
-_item_parser = reqparse.RequestParser()
-_item_parser.add_argument(
-    'meal_id',
-    type=int,
-    required=True,
-    help='This field cannot be left blank.'
-)
-_item_parser.add_argument(
-    'fdc_id',
-    type=int,
-    required=True,
-    help='This field cannot be left blank.'
-)
-_item_parser.add_argument(
-    'grams',
-    type=float,
-    required=True,
-    help='This field cannot be left blank.'
-)
+ingredient_schema = IngredientSchema()
+ingredient_list_schema = IngredientSchema(many=True)
 
 
 class Ingredient(Resource):
@@ -30,21 +15,21 @@ class Ingredient(Resource):
         ingredient = IngredientModel.find_by({'id': _id})
         if not ingredient:
             return {'msg': 'Ingredient not found.'}, 404
-        return ingredient.json(), 200
+        return ingredient_schema.dump(ingredient), 200
 
     @classmethod
     def put(cls, _id: int):
         ingredient = IngredientModel.find_by({'id': _id})
         if not ingredient:
             return {'msg': 'Ingredient not found.'}, 404
-        data = _item_parser.parse_args()
+        data = request.get_json()
         ingredient.fdc_id = data['fdc_id']
         ingredient.grams = data['grams']
         try:
             ingredient.save_to_db()
         except:
             return {'msg': 'Error inserting ingredient.'}, 500
-        return ingredient.json(), 201
+        return ingredient_schema.dump(ingredient), 201
 
     @classmethod
     def delete(cls, _id: int):
@@ -61,14 +46,13 @@ class Ingredient(Resource):
 class IngredientList(Resource):
     @classmethod
     def get(cls):
-        return {'ingredients': [ingredient.json() for ingredient in IngredientModel.find_all()]}
+        return {'ingredients': ingredient_list_schema.dump(IngredientModel.find_all())}, 200
 
     @classmethod
     def post(cls):
-        data = _item_parser.parse_args()
-        ingredient = IngredientModel(**data)
+        ingredient = ingredient_schema.load(request.get_json())
         try:
             ingredient.save_to_db()
         except:
             return {'msg': 'Error inserting ingredient.'}, 500
-        return ingredient.json(), 201
+        return ingredient_schema.dump(ingredient), 201

@@ -1,15 +1,12 @@
-from flask_restful import Resource, reqparse
+from flask import request
+from flask_restful import Resource
 
 from models.meal import MealModel
+from schemas.meal import MealSchema
 
 
-_meal_parser = reqparse.RequestParser()
-_meal_parser.add_argument(
-    'name',
-    type=str,
-    required=True,
-    help="This field cannot be left blank."
-)
+meal_schema = MealSchema()
+meal_list_schema = MealSchema(many=True)
 
 
 class Meal(Resource):
@@ -18,18 +15,18 @@ class Meal(Resource):
         meal = MealModel.find_by({'id': _id})
         if not meal:
             return {'msg': 'Resource not found.'}, 404
-        return meal.json(), 200
+        return meal_schema.dump(meal), 200
 
     @classmethod
     def put(cls, _id: int):
         meal = MealModel.find_by({'id': _id})
         if not meal:
             return {'msg': 'Resource not found.'}, 404
-        data = _meal_parser.parse_args()
+        data = request.get_json()
         meal.name = data["name"]
         try:
             meal.save_to_db()
-            return meal.json(), 200
+            return meal_schema.dump(meal), 200
         except:
             return {'msg': 'Error saving resource.'}, 500
 
@@ -48,14 +45,13 @@ class Meal(Resource):
 class MealList(Resource):
     @classmethod
     def get(cls):
-        return {'meals': [meal.json() for meal in MealModel.find_all()]}, 200
+        return {'meals': meal_list_schema. dump(MealModel.find_all())}, 200
 
     @classmethod
     def post(cls):
-        meal_json = _meal_parser.parse_args()
-        meal = MealModel(**meal_json)
+        meal = meal_schema.load(request.get_json())
         try:
             meal.save_to_db()
-            return meal.json(), 200
+            return meal_schema.dump(meal), 200
         except:
             return {'msg': 'Error saving resource.'}, 500

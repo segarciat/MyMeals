@@ -1,12 +1,14 @@
 import os
 
-from flask import Flask, Blueprint
+from flask import Flask, Blueprint, jsonify
 from flask_restful import Api
+from marshmallow import ValidationError
 from dotenv import load_dotenv
 
 from resources.ingredient import Ingredient, IngredientList
 from resources.meal import Meal, MealList
 from db import db
+from ma import ma
 
 
 load_dotenv()
@@ -26,6 +28,12 @@ def create_tables():
     db.create_all()
 
 
+@app.errorhandler(ValidationError)
+def handle_marshmallow_validation(err):
+    """ Catches errors that result from missing request fields."""
+    return jsonify(err.messages), 400
+
+
 api.add_resource(Ingredient, '/ingredient/<int:_id>')
 api.add_resource(IngredientList, '/ingredient')
 api.add_resource(Meal, '/meal/<int:_id>')
@@ -33,4 +41,5 @@ api.add_resource(MealList, '/meal')
 
 if __name__ == '__main__':
     db.init_app(app)
+    ma.init_app(app)
     app.run(port=os.environ.get("PORT"), debug=True)
