@@ -5,6 +5,7 @@ from flask_restful import Api
 from dotenv import load_dotenv
 
 from resources.ingredient import Ingredient, IngredientList
+from resources.meal import Meal, MealList
 from db import db
 
 
@@ -27,6 +28,8 @@ def create_tables():
 
 api.add_resource(Ingredient, '/ingredient/<int:_id>')
 api.add_resource(IngredientList, '/ingredient')
+api.add_resource(Meal, '/meal/<int:_id>')
+api.add_resource(MealList, '/meal')
 
 if __name__ == '__main__':
     db.init_app(app)

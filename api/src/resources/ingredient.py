@@ -5,29 +5,35 @@ from models.ingredient import IngredientModel
 
 _item_parser = reqparse.RequestParser()
 _item_parser.add_argument(
+    'meal_id',
+    type=int,
+    required=True,
+    help='This field cannot be left blank.'
+)
+_item_parser.add_argument(
     'fdc_id',
     type=int,
     required=True,
-    help='An FDC ID is required.'
+    help='This field cannot be left blank.'
 )
 _item_parser.add_argument(
     'grams',
     type=float,
     required=True,
-    help='An amount in grams is required.'
+    help='This field cannot be left blank.'
 )
 
 
 class Ingredient(Resource):
     @classmethod
-    def get(cls, _id):
+    def get(cls, _id: int):
         ingredient = IngredientModel.find_by({'id': _id})
         if not ingredient:
             return {'msg': 'Ingredient not found.'}, 404
         return ingredient.json(), 200
 
     @classmethod
-    def put(cls, _id):
+    def put(cls, _id: int):
         ingredient = IngredientModel.find_by({'id': _id})
         if not ingredient:
             return {'msg': 'Ingredient not found.'}, 404
@@ -41,7 +47,7 @@ class Ingredient(Resource):
         return ingredient.json(), 201
 
     @classmethod
-    def delete(cls, _id):
+    def delete(cls, _id: int):
         ingredient = IngredientModel.find_by({'id': _id})
         if not ingredient:
             return {'msg': 'Ingredient not found.'}, 404
