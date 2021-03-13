@@ -4,7 +4,7 @@ from flask import Flask, Blueprint
 from flask_restful import Api
 from dotenv import load_dotenv
 
-from resources.ingredient import IngredientResource
+from resources.ingredient import Ingredient, IngredientList
 from db import db
 
 
@@ -25,7 +25,8 @@ def create_tables():
     db.create_all()
 
 
-api.add_resource(IngredientResource, '/ingredient/<int:fdc_id>')
+api.add_resource(Ingredient, '/ingredient/<int:_id>')
+api.add_resource(IngredientList, '/ingredient')
 
 if __name__ == '__main__':
     db.init_app(app)
