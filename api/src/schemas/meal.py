@@ -1,8 +1,8 @@
-from ma import ma
-from models.meal import MealModel
+from src import ma
+from src.models.meal import MealModel
 # This import is necessary to prevent sqlalchemy.exec.InvalidRequestError
-from models.ingredient import IngredientModel
-from schemas.ingredient import IngredientSchema
+from src.models.ingredient import IngredientModel
+from src.schemas.ingredient import IngredientSchema
 
 
 class MealSchema(ma.SQLAlchemyAutoSchema):
