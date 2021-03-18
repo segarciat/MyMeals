@@ -15,7 +15,7 @@ class Meal(Resource):
     def get(cls, _id: int):
         meal = MealModel.query.filter_by(id=_id, user_id=current_user.id).first()
         if not meal:
-            return {'msg': 'Resource not found.'}, 404
+            return {'message': 'Resource not found.'}, 404
         return meal_schema.dump(meal), 200
 
     @classmethod
@@ -24,7 +24,7 @@ class Meal(Resource):
         # See if meal exists.
         meal = MealModel.query.filter_by(id=_id, user_id=current_user.id).first()
         if not meal:
-            return {'msg': 'Resource not found.'}, 404
+            return {'message': 'Resource not found.'}, 404
 
         # Update meal data.
         data = request.get_json()
@@ -36,20 +36,20 @@ class Meal(Resource):
             db.session.commit()
             return meal_schema.dump(meal), 200
         except:
-            return {'msg': 'Error saving resource.'}, 500
+            return {'message': 'Error saving resource.'}, 500
 
     @classmethod
     @login_required
     def delete(cls, _id):
         meal = MealModel.query.filter_by(id=_id, user_id=current_user.id).first()
         if not meal:
-            return {'msg': 'Resource not found.'}, 404
+            return {'message': 'Resource not found.'}, 404
         db.session.delete(meal)
         try:
             db.session.commit()
-            return {'msg': 'Meal deleted.'}, 200
+            return {'message': 'Meal deleted.'}, 200
         except:
-            return {'msg': 'Error deleting resource.'}, 500
+            return {'message': 'Error deleting resource.'}, 500
 
 
 class MealList(Resource):
@@ -68,6 +68,6 @@ class MealList(Resource):
         db.session.add(meal)
         try:
             db.session.commit()
-            return meal_schema.dump(meal), 200
+            return meal_schema.dump(meal), 201
         except:
             return {'msg': 'Error saving resource.'}, 500

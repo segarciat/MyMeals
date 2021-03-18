@@ -17,7 +17,7 @@ class Ingredient(Resource):
     def get(cls, _id: int):
         ingredient = IngredientModel.query.filter_by(id=_id).first()
         if not ingredient:
-            return {'msg': 'Ingredient not found.'}, 404
+            return {'message': 'Ingredient not found.'}, 404
         meal = MealModel.query.filter_by(id=ingredient.meal_id, user_id=current_user.id).first()
         if not meal:
             return {'message': 'Meal does not belong to user'}, 403
@@ -28,7 +28,7 @@ class Ingredient(Resource):
     def put(cls, _id: int):
         ingredient = IngredientModel.query.filter_by(id=_id).first()
         if not ingredient:
-            return {'msg': 'Ingredient not found.'}, 404
+            return {'message': 'Ingredient not found.'}, 404
         meal = MealModel.query.filter_by(id=ingredient.meal_id, user_id=current_user.id).first()
         if not meal:
             return {'message': 'Meal does not belong to user'}, 403
@@ -39,7 +39,7 @@ class Ingredient(Resource):
         try:
             db.session.commit()
         except:
-            return {'msg': 'Error inserting ingredient.'}, 500
+            return {'message': 'Error inserting ingredient.'}, 500
         return ingredient_schema.dump(ingredient), 201
 
     @classmethod
@@ -47,16 +47,16 @@ class Ingredient(Resource):
     def delete(cls, _id: int):
         ingredient = IngredientModel.query.filter_by(id=_id).first()
         if not ingredient:
-            return {'msg': 'Ingredient not found.'}, 404
+            return {'message': 'Ingredient not found.'}, 404
         meal = MealModel.query.filter_by(id=ingredient.meal_id, user_id=current_user.id).first()
         if not meal:
             return {'message': 'Meal does not belong to user'}, 403
         db.session.delete(ingredient)
         try:
             db.session.commit()
-            return {'msg': 'Ingredient deleted.'}, 200
+            return {'message': 'Ingredient deleted.'}, 200
         except:
-            return {'msg': 'Error deleting ingredient.'}, 500
+            return {'message': 'Error deleting ingredient.'}, 500
 
 
 class IngredientList(Resource):
@@ -87,4 +87,4 @@ class IngredientList(Resource):
             db.session.commit()
             return ingredient_schema.dump(new_ingredient), 201
         except:
-            return {'msg': 'Error inserting ingredient.'}, 500
+            return {'message': 'Error inserting ingredient.'}, 500
